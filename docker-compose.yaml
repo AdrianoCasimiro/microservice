@@ -1,0 +1,55 @@
+version: "3.7"
+
+services:
+  rabbit:
+    image: lucifer8591/rabbitmq-server:3.7.17
+    hostname: rabbit
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-admin}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-admin}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:15672"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.env
+
+  db:
+    image: postgres:12-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=hello_flask
+      - POSTGRES_PASSWORD=hello_flask
+      - POSTGRES_DB=hello_flask_dev
+
+  main:
+    build:
+      context: ./communication
+      dockerfile: Dockerfile
+    ports:
+      - 5001:5001
+
+  receive:
+    build:
+      context: ./receive
+      dockerfile: Dockerfile
+    ports:
+      - 5002:5002
+    restart: on-failure
+    depends_on:
+      - rabbit
+    links:
+      - rabbit
+
+volumes:
+  postgres_data:

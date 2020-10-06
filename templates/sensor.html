@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Registered weather data{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>Registered Sensor data</h1>
+<table class="table table-striped">
+<thead>
+<tr>
+  <th>Sensor</th>
+  <th>Temperature</th>
+  <th>Huminity</th>
+</tr>
+</thead>
+<tbody>
+{% for sensor in sensores %}
+  <tr>
+  <td>{{ sensor.s }}</td>
+  <td>{{ sensor.t }}</td>
+  <td>{{ sensor.h }}</td>
+  </tr>
+{% endfor %}
+</table>
+{% endblock %}
