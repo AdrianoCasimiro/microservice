@@ -2,14 +2,14 @@ version: "3.7"
 
 services:
   rabbit:
-    image: lucifer8591/rabbitmq-server:3.7.17
+    image: rabbitmq:3.6.6-management
     hostname: rabbit
     ports:
       - "5672:5672"
       - "15672:15672"
     environment:
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-admin}
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-admin}
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=user
 
   app:
     build: .
@@ -17,6 +17,8 @@ services:
       - 5000:5000
     env_file:
       - ./.env
+    depends_on:
+      - rabbit
 
   db:
     image: postgres:12-alpine
@@ -27,14 +29,16 @@ services:
       - POSTGRES_PASSWORD=hello_flask
       - POSTGRES_DB=hello_flask_dev
 
-  main:
+  producer:
     build:
       context: ./communication
       dockerfile: Dockerfile
     ports:
       - 5001:5001
+    depends_on:
+      - rabbit
 
-  receive:
+  consumer:
     build:
       context: ./receive
       dockerfile: Dockerfile
@@ -45,6 +49,7 @@ services:
       - rabbit
     links:
       - rabbit
+      - db
 
 volumes:
   postgres_data:

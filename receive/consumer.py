@@ -6,27 +6,12 @@ import json
 
 
 def main():
-    # url = os.environ.get(
-    #   'CLOUDAMQP_URL', 'amqps://knyhvuqp:FmajT7qiLGq-IfXkGzzwfNRcMOglqhNI@fox.rmq.cloudamqp.com/knyhvuqp')
+    credentials = pika.PlainCredentials('user', 'user')
+    params = pika.ConnectionParameters('rabbit', 5672, '/', credentials)
+    connection = pika.BlockingConnection(params)
 
-    # connection = pika.BlockingConnection(pika.ConnectionParameters(
-    #   host='rabbit'))
-    #params = pika.URLParameters(url)
-    #connection = pika.BlockingConnection(params)
-    credentials = pika.PlainCredentials('admin', 'admin')
-
-    parameters = pika.ConnectionParameters('rabbit',
-                                           5672,
-                                           '/',
-                                           credentials)
-
-    connection = pika.BlockingConnection(parameters)
     channel = connection.channel()
 
-    # channel.queue_declare(queue='hello')
-
-    # def callback(ch, method, properties, body):
-    #   print(" [x] Received %r" % body)
 
     def store(ch, method, properties, body):
         body = json.loads(body)
@@ -66,7 +51,7 @@ def main():
                 print("PostgreSQL connection is closed")
 
     channel.basic_consume(
-        queue='hello', on_message_callback=store, auto_ack=True)
+        queue="hello", on_message_callback=store, auto_ack=True)
 
     print(' [*] Waiting for messages. To exit press CTRL+C')
     channel.start_consuming()
