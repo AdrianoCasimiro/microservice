@@ -1,7 +1,7 @@
-# microservice
+# Microserviço
 Teste de comunicação entre serviços usando RabbitMQ
 
-Aplicação que simula um sensor enviado dados para o servidor. São três serviços que se comunicam entre si, o producer(main.py) envia os dados para o RabbitMQ e o consumer(receive) consome e armazena no banco de dados PostgreSQL. Por último o serviço app.py(Flask) é responsável por mostrar os dados em uma lista.
+Aplicação que simula um sensor enviado dados para o servidor. São três serviços que se comunicam entre si, o producer envia os dados para o RabbitMQ e o consumer consome e armazena no banco de dados PostgreSQL. Por último o serviço app.py(Flask) é responsável por mostrar os dados em uma lista.
 
 Utilizar docer-compose para testar a aplicação.
 
